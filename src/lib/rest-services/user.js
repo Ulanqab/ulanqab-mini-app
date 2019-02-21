@@ -1,5 +1,15 @@
+/* eslint-disable prefer-promise-reject-errors */
 import * as userRest from '@/lib/rest-sdk/user';
+import { KJUR } from 'jsrsasign';
 
+function parseJWT(jwt) {
+  const decoded = KJUR.jws.JWS.parse(jwt);
+  if (!decoded) {
+    return '';
+  }
+  const decodedToken = decoded.payloadObj;
+  return decodedToken ? decodedToken.eid : '';
+}
 export async function signInMP() {
   return new Promise((resolve, reject) => {
     // https://developers.weixin.qq.com/miniprogram/dev/api/api-login.html
@@ -23,13 +33,12 @@ export async function signInMP() {
               postData.signature,
             )
               .then((data) => {
-                console.log(data);
-                // Persist User
-                // wx.setStorageSync('user', user);
+                parseJWT(data.token);
+                // Persist user
+                wx.setStorageSync('user', data.user);
                 // Persist JWT
-                // wx.setStorageSync('jwt', jwt);
-
-                // resolve(user);
+                wx.setStorageSync('jwt', data.token);
+                resolve(data.user);
               })
               .catch((data) => {
                 reject(data);

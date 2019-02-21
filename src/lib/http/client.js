@@ -1,3 +1,4 @@
+/* eslint-disable prefer-promise-reject-errors */
 function composeHeader() {
   const jwt = wx.getStorageSync('jwt');
   const header = {

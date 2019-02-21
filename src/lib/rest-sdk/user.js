@@ -1,3 +1,4 @@
+/* eslint-disable prefer-promise-reject-errors */
 import { post } from '@/lib/http/client';
 import endpoints from '@/lib/http/endpoints';
 
@@ -6,14 +7,12 @@ export function signInMP(code, iv, encryptedData, signature) {
     post(endpoints.SIGN_IN_MP_URL, {
       code, iv, encryptedData, signature,
     })
-      .then(({ data, statusCode }) => {
-        if (statusCode !== 200) {
-          reject('signInMP() 请求状态码错误');
+      .then((data) => {
+        if (data.data.statusCode === 0) {
+          resolve(data.data.data);
+        } else {
+          reject(`请求失败: ${data.statusMessage}`);
         }
-        resolve({
-          user: data.user,
-          jwt: data.jwt,
-        });
       })
       .catch(() => {
         reject('signInMP() 请求失败');
