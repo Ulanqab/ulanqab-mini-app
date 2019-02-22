@@ -12,14 +12,24 @@
         {{ category.name }}
       </div>
     </scroll-view>
+    <scroll-view
+      scroll-y
+    >
+      <div
+        v-for="feed in feedList"
+        :key="feed.id"
+      >
+        {{ feed.title }}
+      </div>
+    </scroll-view>
   </div>
 </template>
 
 <script>
   import {
-    getFeeds,
-    getCategoryList,
-  } from '@/lib/rest-sdk/feed';
+    mapGetters,
+    mapActions,
+  } from 'vuex';
 
   export default {
     data() {
@@ -31,20 +41,27 @@
     },
 
     onLoad() {
-      this.fetchCategoryList();
+      this.fetchFeedList({
+        categoryId: this.currentCategoryId,
+        page: this.page,
+      });
+    },
+
+    computed: {
+      ...mapGetters([
+        'currentCategoryId',
+        'categoryList',
+        'feedList',
+        'hasMore',
+        'page',
+        'status',
+      ]),
     },
 
     methods: {
-      fetchCategoryList() {
-        getCategoryList().then((res) => {
-          this.categoryList = res.list;
-        }, () => {
-
-        });
-      },
-      fetchFeeds() {
-        getFeeds();
-      },
+      ...mapActions([
+        'fetchFeedList',
+      ]),
     },
   };
 </script>
