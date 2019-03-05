@@ -20,11 +20,11 @@ export function getCategoryList() {
   });
 }
 
-export function getFeeds(category, page) {
-  const url = `${endpoints}/=${category}/page=${page}`;
+export function getFeeds(category, page, count) {
+  const url = `${endpoints.FEED}?category=${category}&page=${page}&count=${count}`;
   return new Promise((resolve, reject) => {
     get(url).then((response) => {
-      resolve(response);
+      resolve(response.data.data);
     }, () => {
       reject();
     });

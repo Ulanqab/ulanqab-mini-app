@@ -7,6 +7,7 @@ const state = {
   currentCategoryId: 2,
   categoryList: [],
   feedList: [],
+  dataList: null,
   page: 1,
   hasMore: false,
   refreshing: false,
@@ -23,7 +24,7 @@ export const getters = {
   page: paramState => paramState.page,
   hasMore: paramState => paramState.hasMore,
   refreshing: paramState => paramState.refreshing,
-  status: paramState => paramState.status,
+  pageStatus: paramState => paramState.pageStatus,
 };
 
 const actions = {
@@ -35,7 +36,7 @@ const actions = {
   async fetchCategoryList(store) {
     const {
       commit,
-    } = store.commit;
+    } = store;
     getCategoryList().then((res) => {
       commit('updateCategoryList', res.list);
     }, () => {
@@ -43,16 +44,16 @@ const actions = {
     });
   },
 
-  async fetchFeedList(store, categoryId, page) {
+  async fetchFeedList(store, param) {
     const {
       commit,
       dispatch,
-    } = store.commit;
-    if (getters.categoryList.length <= 0) {
+    } = store;
+    if (store.getters.categoryList.length < 1) {
       await dispatch('fetchCategoryList');
     }
     const count = 10;
-    getFeeds(categoryId, count, page).then((res) => {
+    getFeeds(param.categoryId, param.page, count).then((res) => {
       commit('updateFeedList', res);
     });
   },
